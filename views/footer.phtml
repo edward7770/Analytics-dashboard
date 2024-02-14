@@ -1,0 +1,25 @@
+<footer>
+<div class="pull-right">
+<i class="fa fa-bitcoin orange"></i> <a href="?p=about"> Node Manager 1.4.0</a> - © 2017 - 2023
+</div>
+<div class="clearfix"></div>
+</footer>
+<script type="text/javascript">
+	<?php
+	if($this->section === "main"){
+		$section = "";
+	}else{
+		$section = "?p=".$this->section;
+	}
+	?>
+	window.history.pushState("", "", "<?= $section ?>");
+
+  const openMobileMenu = () => {
+    const x = document.getElementById("mobileLinks");
+    if (x.style.display === "block") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "block";
+    }
+}
+</script>

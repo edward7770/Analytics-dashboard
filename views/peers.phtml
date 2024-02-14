@@ -1,0 +1,198 @@
+		  <!-- Top Info Bar -->
+		 <div class="panel panel-default">  
+			<div class="panel-body">
+				<div class="row tile_count">
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fa fa-user"></i> Total Peers</span>
+					  <div class="count"><?= $content['tPeers'] ?></div>
+					  <span class="count_bottom"><span class="green" ><i class="fa fa-plus"></i><?= $content['nPeers'] ?></span> New Peers</span>
+					</div>
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fa fa-star" style="color:#EDDA74;"></i> Most Popular Client Version</span>
+					  <div class="count"><?= $content['mpCli'] ?></div>
+					  <span class="count_bottom"><span style="color:#EDDA74;"> <?= $content['mpCliC'] ?></span> Peers</span>
+					</div>
+					<?php if($content['geo']){?><div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fa fa-globe"></i> Most Popular Country</span>
+					  <div class="count"><?= $content['mpCou'] ?></div>
+					  <span class="count_bottom"><span class="blue" ><?= $content['mpCouC'] ?></span> Peers</span>
+					</div>
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fa fa-server" style="color:orange;"></i> Most Popular ISP</span>
+					  <div class="count"><?= $content['mpIsp'] ?></div>
+					  <span class="count_bottom"><span style="color:orange;"><?= $content['mpIspC'] ?></span> Peers</span>
+					</div>
+          <?php } ?>
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fa fa-cloud" title="Since last start"></i> Total Traffic (GB)</span>
+					  <div class="count"><?= ($content['tTraffic'] >= 1000) ? round($content['tTraffic']/1000,2)." <small>TB</small>" : $content['tTraffic'] ?></div>
+					  <span class="count_bottom"><i style="color:lightblue"> <?= $content['tTrafficOutP'] ?>%</i> Upload</span>
+					</div>
+					<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+					  <span class="count_top"><i class="fa fa-cloud" style="color:lightblue;"></i> Traffic by Current Peers (GB)</span>
+					  <div class="count"><?= ($content['cTraffic'] >= 1000) ? round($content['cTraffic']/1000,2)." <small>TB</small>" : $content['cTraffic'] ?></div>
+					  <span class="count_bottom"><i style="color:lightblue;"> <?= $content['cTrafficP'] ?>%</i> of total Traffic</span>
+					</div>
+				  </div>
+				  </div>
+			 </div>
+			<!-- Top Info Bar End-->
+      <!-- Message -->
+      <?php if(!empty($message)){ ?>
+      <div class="row">
+        <div class="col-md-3 col-sm-3 col-xs-12">
+          <div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <?= $message ?>
+          </div>
+        </div>
+      </div>
+      <?php } ?>
+      <!-- Message End -->
+			<!-- Content -->				   
+			<div class="row">
+			<!-- Peer List -->
+			  <div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+				  <div class="x_title">
+					<h2>Peers <small>Connected</small></h2>
+					<ul class="nav navbar-right panel_toolbox">
+					  <li><a class="close-link"><i class="fa fa-close"></i></a></li>
+					  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+					  <li><a><i class="fa fa-question-circle-o" data-toggle="tooltip" data-html="true" data-placement="left" title="Click the 'Rules' button below to run rules."></i></a></li>
+            <?php if(isset($content['api'])) { ?><li><a><i class="fa fa-refresh" data-toggle="tooltip" data-html="true" data-placement="left" title="<?= $content["api"]["callc"] ?> call(s) to API with <?= $content["api"]["ipc"] ?> new ip(s)."></i></a></li><?php }?>
+					</ul>
+					<div class="clearfix"></div>
+				  </div>
+				  <div class="x_content" hidden>
+					<table id="connectedpeers" class="table table-striped table-bordered table-valign">
+					  <thead>
+						<tr>
+						  <th>ID</th>
+						  <th>IP</th>
+		          <?php if($content['geo']){ ?> <th>Country</th> <?php } ?>
+		          <?php if($content['geo']){ ?> <th style="min-width:75px;">ISP</th> <?php } ?>
+              <th>Services</th>
+						  <th>Age <span style="font-weight:normal;">(h)</span></th>
+						  <th>Client</th>
+						  <th>Traffic <span style="font-weight:normal;">(MB)</span></th>
+						  <th style="min-width:100px;">Control</th>
+						</tr>
+					  </thead>
+
+
+					  <tbody>
+						<?php $i = 0;
+						foreach($content['peers'] as $peer){ ?>
+							<tr>
+								<td style="padding-right:0px;" title="<?=$peer->inbound ? "Inbound": "Outbond" ?>"><?=$peer->inbound ? "»": "«" ?> <?php if($peer->whitelisted){ ?><i class="fa fa-shield" title="Whitelisted"></i> <?php } else { ?><?php } ?><?=$peer->id ?></td>
+								<td title="Ping: <?=$peer->ping ?> ms"><?=$peer->ip ?></td>  
+								<?php if($content['geo']){?><td><?php if(!empty($peer->country)){ ?><img src="assets/images/flags/16/<?=$peer->country ?>.png" /> <?php echo $peer->country; } ?></td><?php } ?>  
+								<?php if($content['geo']){ ?> <td style="padding-right:0px;"><?php if($peer->hosted){ ?><i class="fa fa-cloud" title="Cloud"></i><?php } else{ ?><span style="padding-left:18px;"></span><?php } ?> <span title="<?= $peer->isp ?>"><?= substr($peer->isp,0,19) ?></span></td> <?php } ?>  
+                <td style="padding-right:0px;">
+								<?php
+								if(!empty($peer->services)){
+									foreach($peer->services as $key => $service){
+										echo '<button type="button" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="'.$key.'">'.$service.'</button>';													 
+									}
+								} ?>
+								</td>
+                <td style="padding-right:0px;"> <?= round($peer->age/60,1) ?></td>
+								<td style="padding-right:0px;"><?php if($peer->monitoring){ ?><i class="fa fa-binoculars" title="Monitoring"></i><?php } else{ ?><span style="padding-left:18px;"></span><?php } ?> <span title="<?= $peer->client ?>"><?= substr($peer->client,0,22) ?></span></td>  
+								<td style="padding-right:0px;" title="Upload: <?= $peer->trafficOut ?> / Download: <?= $peer->trafficIn ?>"> <?= $peer->traffic ?></td>
+								<td style="padding-right:0px;">
+									<div class="btn-group pull-left" style="padding:5px 0 3px 0px; margin-bottom:0px">
+										<button type="button" class="btn btn-default btn-xs">Manage</button>
+										<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											<span class="caret"></span>
+											<span class="sr-only">Toggle Dropdown</span>
+										</button>
+										<ul class="dropdown-menu">
+											<li><a href="?p=peers&c=ban&ip=<?= $peer->ip ?>&time=86400&t=<?= $_SESSION["csfrToken"] ?>"><i class="fa fa-clock-o" style="color:darkred"></i> Ban 24 hours</a></li>
+											<li><a href="?p=peers&c=ban&ip=<?= $peer->ip ?>&time=2592000&t=<?= $_SESSION["csfrToken"] ?>"><i class="fa fa-clock-o" style="color:darkred"></i> Ban 30 days</a></li>
+											<li><a href="?p=peers&c=ban&ip=<?= $peer->ip ?>&time=31536000&t=<?= $_SESSION["csfrToken"] ?>"><i class="fa fa-clock-o" style="color:darkred"></i> Ban 365 days</a></li>
+											<li class="divider"></li>
+											<li><a href="?p=peers&c=disconnect&ip=<?=$peer->ipOriginal ?>&t=<?= $_SESSION["csfrToken"] ?>"><i class="fa fa-times" style="color:darkorange"></i> Disconnect</a></li>
+											<?php if($content['geo'] AND !$peer->hosted){ ?> <li class="divider"></li>
+											<li><a href="?p=peers&c=addhoster&n=<?= $peer->isp ?>&t=<?= $_SESSION["csfrToken"] ?>"><i class="fa fa-plus" style="color:green"></i> Add Hoster (ISP)</a></li> <?php } ?>   
+										</ul>
+									</div>
+									
+									<div class="btn-group pull-left" style="padding:5px 0 3px 7px; margin-bottom:0px">
+										<button type="button" class="btn btn-default btn-xs">Details</button>
+										<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											<span class="caret"></span>
+											<span class="sr-only">Toggle Dropdown</span>
+										</button>
+										<ul class="dropdown-menu">
+											<li><a href="http://ip-api.com/#<?= $peer->ip ?>" target="_blank"><i class="fa fa-globe fa-lg" style="color:lightblue"></i> Whois</a></li>
+											<li><a href="https://bitnodes.io/nodes/?q=<?= $peer->ip ?>" target="_blank"><i class="fa fa-search-plus fa-lg" style="color:lightblue"></i> Bitnodes</a></li>
+											<li><a href="https://duckduckgo.com/?q=<?= $peer->ip ?>" target="_blank"><i class="fa fa-search fa-lg" style="color:lightblue"></i> DuckDuckGo</a></li>												  
+											<li><a href="https://www.abuseipdb.com/check/<?= $peer->ip ?>" target="_blank"><i class="fa fa-search-minus fa-lg" style="color:lightblue"></i> AbuseIP DB</a></li>
+										</ul>
+									</div>										   
+								</td>										   
+							</tr>	  
+						<?php } ?>						
+					  </tbody>
+					</table>
+				  </div>
+				  <div class="clearfix"></div>
+				</div>
+			  </div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<!-- /page content -->
+
+	<!-- footer content -->
+	<?php include('views/footer.phtml') ?>
+	<!-- /footer content -->
+	</div>
+	</div>
+
+	<!-- jQuery -->
+	<script src="assets/js/jquery.min.js"></script>
+	<!-- Bootstrap -->
+	<script src="assets/js/bootstrap.min.js"></script>
+	<!-- Datatables -->
+	<script src="assets/js/jquery.dataTables.min.js"></script>
+	<script src="assets/js/dataTables.bootstrap.min.js"></script>
+	<script src="assets/js/dataTables.buttons.min.js"></script>
+
+	<!-- Custom Theme Scripts -->
+	<script src="assets/js/custom.min.js"></script>
+
+  <!-- Custom Datatables Script -->
+	<script src="assets/js/custom/datatables-peers.js"></script>
+	<!-- /Datatables -->
+	<script>
+  $(document).ready(function() {
+    $('#connectedpeers').DataTable( {
+      paging:   false,
+      bInfo: false,
+      order: [[ 5, 'desc' ]],
+      dom: '<"dataTables_exportbtn"B>ft',
+      buttons: [
+            {
+              text: 'Rules',
+              className: "btn btn-info",
+              action: function () {
+                  document.location = "?p=peers&c=run&t=<?= $_SESSION["csfrToken"] ?>";
+                  }
+            }
+      ]
+    } );
+
+    // Check for search query
+    const searchQuery = "<?php  if(isset($_GET['q'])) echo htmlspecialchars($_GET['q']) ?>";
+    if(searchQuery) {
+      const searchBar = document.getElementsByClassName("input-sm")[0]
+      searchBar.value = searchQuery
+      searchBar.dispatchEvent(new Event('keyup'));
+    }
+     document.getElementsByClassName("x_content")[0].hidden = false
+	  });
+	</script>
+  </body>
+</html>
